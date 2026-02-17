@@ -5,7 +5,8 @@ import fetch from 'node-fetch'
 import PhoneNumber from 'awesome-phonenumber'
 import fs from 'fs'
 import util from 'util'
-import { fileTypeFromBuffer } from 'file-type' 
+import FileType from 'file-type';
+const { fileTypeFromBuffer } = FileType;
 import { format } from 'util'
 import { fileURLToPath } from 'url'
 import store from './store.js'
