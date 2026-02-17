@@ -33,7 +33,7 @@ global.author = "© mᥲძᥱ ᥕі𝗍һ ᑲᥡ 𝙰𝙱𝙳𝙾𝚄"
 global.etiqueta = "𝙰𝙱𝙳𝙾𝚄"
 global.currency = "𝙰𝚁𝚃𝙷𝚄𝚁"
 global.banner = "https://raw.githubusercontent.com/The-King-Destroy/Adiciones/main/Contenido/1742678744381.jpeg"
-global.icono = "https://raw.githubusercontent.com/The-King-Destroy/Adiciones/main/Contenido/1742678797993.jpeg"
+global.icono = "./lib/arthur.jpg"
 global.catalogo = fs.readFileSync('./lib/catalogo.jpg')
 
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
@@ -74,11 +74,7 @@ global.APIs = {
     url: "https://api.ootaizumi.web.id",
     key: null
   },
-  stellar: {
-    url: "https://api.stellarwa.xyz",
-    key: "YukiWaBot",
-    key2: "1bcd4698ce6c75217275c9607f01fd99"
-  },
+  
   apifaa: {
     url: "https://api-faa.my.id",
     key: null
