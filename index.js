@@ -8,48 +8,29 @@ import { platform } from 'process'
 import * as ws from 'ws'
 import fs, { readdirSync, statSync, unlinkSync, existsSync, mkdirSync, readFileSync, rmSync, watch } from 'fs'
 import yargs from 'yargs'
-import os from 'os'
 import { spawn, execSync } from 'child_process'
 import lodash from 'lodash'
 import { yukiJadiBot } from './plugins/sockets-serbot.js'
 import chalk from 'chalk'
 import syntaxerror from 'syntax-error'
-// ✅ إصلاح 1: حذف import مكرر لـ pino واستبداله بـ import واحد
 import pino from 'pino'
+import Pino from 'pino'
 import path, { join, dirname } from 'path'
 import { Boom } from '@hapi/boom'
 import { makeWASocket, protoType, serialize } from './lib/simple.js'
 import { Low, JSONFile } from 'lowdb'
 import store from './lib/store.js'
-// ✅ إصلاح 2: إضافة format من util لأنها كانت مستخدمة بدون import
-import { format } from 'util'
+const { proto } = (await import('@whiskeysockets/baileys')).default
 import pkg from 'google-libphonenumber'
-import readline from 'readline'
-import NodeCache from 'node-cache'
-
-// ✅ إصلاح 3: دمج imports الـ baileys في عملية واحدة بدل مرتين
-const _baileys = await import('@whiskeysockets/baileys')
-const _baileysExports = _baileys.DisconnectReason ? _baileys : (_baileys.default || _baileys)
-const { proto } = _baileysExports
-const {
-  DisconnectReason,
-  useMultiFileAuthState,
-  MessageRetryMap,
-  fetchLatestBaileysVersion,
-  makeCacheableSignalKeyStore,
-  jidNormalizedUser
-} = _baileysExports
-
 const { PhoneNumberUtil } = pkg
 const phoneUtil = PhoneNumberUtil.getInstance()
+const { DisconnectReason, useMultiFileAuthState, MessageRetryMap, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, jidNormalizedUser } = await import('@whiskeysockets/baileys')
+import readline, { createInterface } from 'readline'
+import NodeCache from 'node-cache'
 
 const { CONNECTING } = ws
 const { chain } = lodash
 const PORT = process.env.PORT || process.env.SERVER_PORT || 3000
-
-// مجلد السوب بوتات
-const jadi = process.env.JADI_FOLDER || 'Sessions/SubBot'
-global.yukiJadibts = process.env.ENABLE_SUBBOTS !== 'false'
 
 let { say } = cfonts
 console.log(chalk.magentaBright('\n❀ Iniciando...'))
@@ -82,11 +63,11 @@ const __dirname = global.__dirname(import.meta.url)
 global.opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
 global.prefix = new RegExp('^[#!./-]')
 
-// جلسة التخزين
-global.sessions = process.env.BOT_SESSIONS || './Sessions/Principal/'
+// ---------- جلسة التخزين: تأكد تضع المتغير في Railway أو المسار الصحيح ----------
+global.sessions = process.env.BOT_SESSIONS || '/storage/emulated/0/arthur/Sessions/Principal/'
+// ---------------------------------------------------------------------------
 
-// ✅ إصلاح 4: إزالة cloudDBAdapter غير المعرف، نستخدم JSONFile فقط
-global.db = new Low(new JSONFile('database.json'))
+global.db = new Low(/https?:\/\//.test(global.opts['db'] || '') ? new cloudDBAdapter(global.opts['db']) : new JSONFile('database.json'))
 global.DATABASE = global.db
 
 global.loadDatabase = async function loadDatabase() {
@@ -112,40 +93,46 @@ global.loadDatabase = async function loadDatabase() {
 }
 await loadDatabase()
 
+// --------- استخدم useMultiFileAuthState مع مجلد الجلسات المُحدد ----------
 const { state, saveState, saveCreds } = await useMultiFileAuthState(global.sessions)
+// ---------------------------------------------------------------------
 
 const msgRetryCounterMap = new Map()
 const msgRetryCounterCache = new NodeCache({ stdTTL: 0, checkperiod: 0 })
 const userDevicesCache = new NodeCache({ stdTTL: 0, checkperiod: 0 })
 const { version } = await fetchLatestBaileysVersion()
 
-// رقم البوت الافتراضي
+// رقم البوت الافتراضي من global أو من env
 let phoneNumber = process.env.BOT_PHONE || global.botNumber || ''
+// نحتفظ بالنص الرقمي فقط (بدون + أو مسافات)
 if (phoneNumber) phoneNumber = phoneNumber.replace(/\D/g, '')
 
-// طريقة الربط
+// طريقة الربط من متغير البيئة (qr / code / mobile)
 const methodEnv = (process.env.BOT_METHOD || '').toLowerCase()
 const methodCodeQR = methodEnv === 'qr'
 const methodCode = methodEnv === 'code'
 const methodMobile = methodEnv === 'mobile'
 
-// خيارات العرض
+// خيارات العرض والواجهة
 const colors = chalk.bold.white
 const qrOption = chalk.blueBright
 const textOption = chalk.cyan
 
-// واجهة readline
+// واجهة readline (للطوارئ فقط)
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
 const question = (texto) => new Promise((resolver) => rl.question(texto, resolver))
 
+// تحديد الخيار (opcion) حسب متغير البيئة أو الافتراضي التفاعلي
 let opcion
 if (methodCodeQR) opcion = '1'
 else if (methodCode) opcion = '2'
 else if (methodMobile) opcion = '3'
 
+/* لو ما حُدد BOT_METHOD وما في creds.json، نترك السلوك التفاعلي القديم */
 const credsPath = join(global.sessions, 'creds.json')
 
 if (!opcion && !fs.existsSync(credsPath)) {
+  // حمّل تفضيل المستخدم من CLI/ENV إذا كان موجود ثم اسأل تراكراً مثل السابق
   do {
     opcion = await question(colors("Seleccione una opción:\n") + qrOption("1. Con código QR\n") + textOption("2. Con código de texto de 8 dígitos\n--> "))
     opcion = (opcion || '').trim()
@@ -154,8 +141,10 @@ if (!opcion && !fs.existsSync(credsPath)) {
       opcion = null
     }
   } while (!opcion && !fs.existsSync(credsPath))
+  // إذا سُئلت تفاعلياً، حافظنا على الخصائص القديمة
 }
 
+// منع طباعة info زائدة
 console.info = () => {}
 
 const connectionOptions = {
@@ -165,8 +154,7 @@ const connectionOptions = {
   browser: ["MacOs", "Safari"],
   auth: {
     creds: state.creds,
-    // ✅ إصلاح 5: استخدام pino بدل Pino المحذوف
-    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
+    keys: makeCacheableSignalKeyStore(state.keys, Pino({ level: "fatal" }).child({ level: "fatal" })),
   },
   markOnlineOnConnect: false,
   generateHighQualityLinkPreview: true,
@@ -192,10 +180,12 @@ const connectionOptions = {
 global.conn = makeWASocket(connectionOptions)
 conn.ev.on("creds.update", saveCreds)
 
+// إذا لم توجد creds و اخترت الخيار 2 (code) استخدم BOT_PHONE إن وُجد
 if (!fs.existsSync(credsPath)) {
   if (opcion === '2') {
     if (phoneNumber) {
       const addNumber = phoneNumber.replace(/[^0-9]/g, '')
+      // نطلب كود الربط باستخدام الرقم المُعرف في المتغير
       try {
         setTimeout(async () => {
           let codeBot = await conn.requestPairingCode(addNumber)
@@ -206,6 +196,7 @@ if (!fs.existsSync(credsPath)) {
         console.error('Error requesting pairing code:', err)
       }
     } else {
+      // احتياطي: اسأل المستخدم إذا لم يُعرف BOT_PHONE (حافظت على السلوك القديم للطوارئ)
       try {
         let tempPhone
         do {
@@ -231,13 +222,13 @@ conn.isInit = false
 conn.well = false
 conn.logger?.info && conn.logger.info(`[ ✿ ]  ＡＢＤＯＵ\n`)
 
+// حفظ دوري لقاعدة البيانات (استبدلت opts بـ global.opts)
 if (!global.opts['test']) {
   if (global.db) setInterval(async () => {
     if (global.db.data) await global.db.write()
     if (global.opts['autocleartmp'] && (global.support || {}).find) {
-      // ✅ إصلاح 6: إضافة os وإصلاح cp.spawn → spawn مباشرة
       const tmp = [os.tmpdir(), 'tmp', `${jadi}`]
-      tmp.forEach((filename) => spawn('find', [filename, '-amin', '3', '-type', 'f', '-delete']))
+      tmp.forEach((filename) => cp.spawn('find', [filename, '-amin', '3', '-type', 'f', '-delete']))
     }
   }, 30 * 1000)
 }
@@ -320,12 +311,11 @@ if (global.yukiJadibts) {
   } else {
     console.log(chalk.bold.cyan(`ꕥ La carpeta: ${jadi} ya está creada.`))
   }
-  // ✅ إصلاح 7: تغيير rutaJadiBot → global.rutaJadiBot (كانت undefined)
-  const readRutaJadiBot = readdirSync(global.rutaJadiBot)
+  const readRutaJadiBot = readdirSync(rutaJadiBot)
   if (readRutaJadiBot.length > 0) {
     const creds = 'creds.json'
     for (const gjbts of readRutaJadiBot) {
-      const botPath = join(global.rutaJadiBot, gjbts)
+      const botPath = join(rutaJadiBot, gjbts)
       if (existsSync(botPath) && statSync(botPath).isDirectory()) {
         const readBotPath = readdirSync(botPath)
         if (readBotPath.includes(creds)) {
@@ -336,9 +326,7 @@ if (global.yukiJadibts) {
   }
 }
 
-// ✅ إصلاح 8: تغيير مسار البلاغنز من './plugins/index' إلى './plugins'
-// (المسار القديم كان خاطئ وسبب عدم تحميل الأوامر)
-const pluginFolder = global.__dirname(join(__dirname, './plugins'))
+const pluginFolder = global.__dirname(join(__dirname, './plugins/index'))
 const pluginFilter = (filename) => /\.js$/.test(filename)
 global.plugins = {}
 async function filesInit() {
@@ -369,7 +357,6 @@ global.reload = async (_ev, filename) => {
       sourceType: 'module',
       allowAwaitOutsideFunction: true,
     })
-    // ✅ format الآن معرّف من import { format } from 'util'
     if (err) conn.logger?.error && conn.logger.error(`syntax error while loading '${filename}'\n${format(err)}`)
     else {
       try {
@@ -387,6 +374,7 @@ Object.freeze(global.reload)
 watch(pluginFolder, global.reload)
 await global.reloadHandler()
 
+// فحص سريع للأدوات
 async function _quickTest() {
   const test = await Promise.all([
     spawn('ffmpeg'),
