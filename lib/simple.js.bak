@@ -11,18 +11,14 @@ import { fileURLToPath } from 'url'
 import store from './store.js'
 import pino from 'pino'
 import * as baileys from "@whiskeysockets/baileys"
-import { randomBytes } from 'crypto'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 /**
  * @type {import("baileys")}
  */
-const _baileys = await import('@whiskeysockets/baileys')
-const _baileysExports = _baileys.default || _baileys
-
 const {
-    default: _makeWaSocketDefault,
+    default: _makeWaSocket,
     makeWALegacySocket,
     proto,
     downloadContentFromMessage,
@@ -38,16 +34,13 @@ const {
     prepareWAMessageMedia,
     WA_DEFAULT_EPHEMERAL,
     PHONENUMBER_MCC,
-    S_WHATSAPP_NET,
-} = _baileysExports
-
-const _makeWaSocket = _makeWaSocketDefault || _baileysExports.makeWASocket || _baileysExports.default
+} = (await import('@whiskeysockets/baileys')).default
 
 export function makeWASocket(connectionOptions, options = {}) {
     /**
      * @type {import("baileys").WASocket | import("baileys").WALegacySocket}
      */
-    const conn = (global.opts?.["legacy"] && makeWALegacySocket ? makeWALegacySocket : _makeWaSocket)(
+    const conn = (global.opts["legacy"] ? makeWALegacySocket : _makeWaSocket)(
         connectionOptions,
     );
 
@@ -241,7 +234,7 @@ async value(jid, medias, options = {}) {
                     /^data:.*?\/.*?;base64,/i.test(PATH) ?
                     Buffer.from(PATH.split`,` [1], "base64") :
                     /^https?:\/\//.test(PATH) ?
-                    Buffer.from(await (res = await fetch(PATH)).arrayBuffer()) :
+                    await (res = await fetch(PATH)).buffer() :
                     fs.existsSync(PATH) ?
                     ((filename = PATH), fs.readFileSync(PATH)) :
                     typeof PATH === "string" ?
@@ -2145,10 +2138,6 @@ END:VCARD
  */
 export function smsg(conn, m, hasParent) {
     if (!m) return m;
-    if (!proto?.WebMessageInfo) {
-        console.error("[smsg] proto.WebMessageInfo غير متاح");
-        return m;
-    }
     const M = proto.WebMessageInfo;
     try {
         m = M.fromObject(m);
@@ -2217,11 +2206,6 @@ export function serialize() {
     };
     const safeSplit = (str, separator) =>
         typeof str === "string" ? str.split(separator) : [];
-    
-    if (!proto?.WebMessageInfo?.prototype) {
-        console.error("[serialize] proto.WebMessageInfo غير متاح، تخطي serialize()");
-        return;
-    }
     
     return Object.defineProperties(proto.WebMessageInfo.prototype, {
         conn: {
