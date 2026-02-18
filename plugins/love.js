@@ -86,7 +86,7 @@ const tips = [
   'أنت الحلم الذي لا أريد أن أستيقظ منه أبداً، والحقيقة التي أعيشها بكل حب.*', 
  ] 
 const randomImage = tips[Math.floor(Math.random() * tips.length)];
-   var messa = await prepareWAMessageMedia({ image: { url:'https://telegra.ph/file/51325ec1160cfe22a7111.jpg' } }, { upload: conn.waUploadToServer });
+   var messa = await prepareWAMessageMedia({ image: { url:'https://telegra.ph/file/51325ec1160cfe22a7111.jpg' } }, { upload: conn.waUploadToServer, logger: console });
 let msg = generateWAMessageFromContent(m.chat, {
   viewOnceMessage: {
     message: {
@@ -124,9 +124,9 @@ let msg = generateWAMessageFromContent(m.chat, {
         })
     }
   }
-}, {})
+}, { userJid: conn.user.jid, quoted: m })
 
-await conn.relayMessage(msg.key.remoteJid, msg.message, { messageId: msg.key.id })
+await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
 
 } 
 handler.tags = ['frasss'];

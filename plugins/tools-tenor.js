@@ -30,7 +30,7 @@ async function sendAlbumMessage(jid, medias, options = {}) {
                 quotedMessage: options.quoted.message 
             }} : {}),
         }
-    }, {})
+    }, { userJid: conn.user.jid, quoted: m })
 
     await conn.relayMessage(album.key.remoteJid, album.message, { messageId: album.key.id })
 

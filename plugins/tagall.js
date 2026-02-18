@@ -40,7 +40,7 @@ let handler = async (m, { isOwner, isAdmin, conn, text, participants, args, comm
     const coverImageUrl = 'https://files.catbox.moe/ziws8j.jpg';
     const messa = await prepareWAMessageMedia(
       { image: { url: coverImageUrl } },
-      { upload: conn.waUploadToServer }
+      { upload: conn.waUploadToServer, logger: console }
     );
 
     const interactiveMessage = {

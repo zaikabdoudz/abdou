@@ -33,7 +33,7 @@ let handler = async (m, { conn }) => {
     ]
 
     // === Imagen desde URL ===
-    const media = await prepareWAMessageMedia({ image: { url: imageUrl } }, { upload: conn.waUploadToServer })
+    const media = await prepareWAMessageMedia({ image: { url: imageUrl } }, { upload: conn.waUploadToServer, logger: console })
     const header = proto.Message.InteractiveMessage.Header.fromObject({
       hasMediaAttachment: true,
       imageMessage: media.imageMessage

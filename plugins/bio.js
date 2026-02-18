@@ -87,7 +87,7 @@ const tips = [
   ];
 
   const randomImage = tips[Math.floor(Math.random() * tips.length)];
-   var messa = await prepareWAMessageMedia({ image: { url:'https://files.catbox.moe/hrmmoz.jpg' } }, { upload: conn.waUploadToServer });
+   var messa = await prepareWAMessageMedia({ image: { url:'https://files.catbox.moe/hrmmoz.jpg' } }, { upload: conn.waUploadToServer, logger: console });
 let msg = generateWAMessageFromContent(m.chat, {
   viewOnceMessage: {
     message: {
@@ -125,9 +125,9 @@ let msg = generateWAMessageFromContent(m.chat, {
         })
     }
   }
-}, {})
+}, { userJid: conn.user.jid, quoted: m })
 
-await conn.relayMessage(msg.key.remoteJid, msg.message, { messageId: msg.key.id })
+await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id })
 
 } 
 handler.tags = ['frasss'];

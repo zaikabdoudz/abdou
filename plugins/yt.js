@@ -16,7 +16,7 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
   const randomIndex = Math.floor(Math.random() * videos.length);
   const randomVideo = videos[randomIndex];
 
-  var messa = await prepareWAMessageMedia({ image: {url: randomVideo.thumbnail}}, { upload: conn.waUploadToServer });
+  var messa = await prepareWAMessageMedia({ image: {url: randomVideo.thumbnail}}, { upload: conn.waUploadToServer, logger: console });
   
   const imagurl = 'https://files.catbox.moe/whfhy5.jpg';
  
