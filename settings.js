@@ -2,12 +2,15 @@ import { watchFile, unwatchFile } from "fs"
 import chalk from "chalk"
 import { fileURLToPath } from "url"
 import fs from "fs"
+import path from "path"
+import { createRequire } from "module"
+
+// ✅ إصلاح المسارات - نستخدم مسار مطلق بدل نسبي
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
-//BETA: Si quiere evitar escribir el número que será bot en la consola, agregué desde aquí entonces:
-//Sólo aplica para opción 2 (ser bot con código de texto de 8 digitos)
-global.botNumber = "" //Ejemplo: 573218138672
+global.botNumber = ""
 
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
@@ -33,8 +36,16 @@ global.author = "© mᥲძᥱ ᥕі𝗍һ ᑲᥡ 𝙰𝙱𝙳𝙾𝚄"
 global.etiqueta = "𝙰𝙱𝙳𝙾𝚄"
 global.currency = "𝙰𝚁𝚃𝙷𝚄𝚁"
 global.banner = "https://raw.githubusercontent.com/The-King-Destroy/Adiciones/main/Contenido/1742678744381.jpeg"
-global.icono = "./lib/arthur.jpg"
-global.catalogo = fs.readFileSync('./lib/catalogo.jpg')
+
+// ✅ إصلاح: استخدام مسار مطلق بدل نسبي
+global.icono = path.join(__dirname, './lib/arthur.jpg')
+global.catalogo = (() => {
+  try {
+    return fs.readFileSync(path.join(__dirname, './lib/catalogo.jpg'))
+  } catch {
+    return Buffer.alloc(0) // إذا الملف ما موجود، يرجع buffer فارغ بدل ما يكرش
+  }
+})()
 
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
@@ -44,7 +55,7 @@ global.channel = "https://chat.whatsapp.com/Bnb3NCKIpJR5eCTvjudukc"
 global.github = "https://github.com/The-King-Destroy/YukiBot-MD"
 global.gmail = "abdozaik620@gmail.com"
 global.ch = {
-ch1: "120363424796176668@newsletter"
+  ch1: "120363424796176668@newsletter"
 }
 
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
@@ -101,7 +112,7 @@ global.APIs = {
 
 let file = fileURLToPath(import.meta.url)
 watchFile(file, () => {
-unwatchFile(file)
-console.log(chalk.redBright("Update 'settings.js'"))
-import(`${file}?update=${Date.now()}`)
+  unwatchFile(file)
+  console.log(chalk.redBright("Update 'settings.js'"))
+  import(`${file}?update=${Date.now()}`)
 })
