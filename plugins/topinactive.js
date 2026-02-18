@@ -1,4 +1,3 @@
-import { resolveLidToRealJid } from "../../lib/utils.js"
 
 export default {
   command: ['topinactive','topinactivos','topinactiveusers'],

@@ -1,6 +1,5 @@
 import fs from 'fs'
-import exif from '../../lib/exif.js'
-const { writeExif } = exif
+import { writeExif } from '../lib/exif.js'
 
 export default {
   command: ['فيد', 's'],

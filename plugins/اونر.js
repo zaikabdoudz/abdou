@@ -1,4 +1,4 @@
-import { resolveLidToRealJid } from "../../lib/utils.js"
+import { resolveLidToRealJid } from "../lib/utils.js"
 
 export default {
   command: ['اونر', 'setowner'],
