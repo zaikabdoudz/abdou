@@ -8,9 +8,7 @@ import { platform } from 'process'
 import * as ws from 'ws'
 import fs, { readdirSync, statSync, unlinkSync, existsSync, mkdirSync, readFileSync, rmSync, watch } from 'fs'
 import yargs from 'yargs'
-import os from 'os'
-import { spawn as cpSpawn, execSync } from 'child_process'
-const cp = { spawn: cpSpawn }
+import { spawn, execSync } from 'child_process'
 import lodash from 'lodash'
 import { yukiJadiBot } from './plugins/sockets-serbot.js'
 import chalk from 'chalk'
@@ -22,14 +20,11 @@ import { Boom } from '@hapi/boom'
 import { makeWASocket, protoType, serialize } from './lib/simple.js'
 import { Low, JSONFile } from 'lowdb'
 import store from './lib/store.js'
-const _baileysIndex = await import('@whiskeysockets/baileys')
-const { proto } = _baileysIndex.proto ? _baileysIndex : (_baileysIndex.default || _baileysIndex)
+const { proto } = (await import('@whiskeysockets/baileys')).default
 import pkg from 'google-libphonenumber'
 const { PhoneNumberUtil } = pkg
 const phoneUtil = PhoneNumberUtil.getInstance()
-const _baileysNamed = await import('@whiskeysockets/baileys')
-const _baileysNamedExports = _baileysNamed.DisconnectReason ? _baileysNamed : (_baileysNamed.default || _baileysNamed)
-const { DisconnectReason, useMultiFileAuthState, MessageRetryMap, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, jidNormalizedUser } = _baileysNamedExports
+const { DisconnectReason, useMultiFileAuthState, MessageRetryMap, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, jidNormalizedUser } = await import('@whiskeysockets/baileys')
 import readline, { createInterface } from 'readline'
 import NodeCache from 'node-cache'
 
@@ -71,10 +66,6 @@ global.prefix = new RegExp('^[#!./-]')
 // ---------- جلسة التخزين: تأكد تضع المتغير في Railway أو المسار الصحيح ----------
 global.sessions = process.env.BOT_SESSIONS || '/storage/emulated/0/arthur/Sessions/Principal/'
 // ---------------------------------------------------------------------------
-
-// مجلد السوب بوتات
-const jadi = process.env.JADI_FOLDER || 'Sessions/SubBot'
-global.yukiJadibts = process.env.ENABLE_SUBBOTS !== 'false'
 
 global.db = new Low(/https?:\/\//.test(global.opts['db'] || '') ? new cloudDBAdapter(global.opts['db']) : new JSONFile('database.json'))
 global.DATABASE = global.db
@@ -320,11 +311,11 @@ if (global.yukiJadibts) {
   } else {
     console.log(chalk.bold.cyan(`ꕥ La carpeta: ${jadi} ya está creada.`))
   }
-  const readRutaJadiBot = readdirSync(global.rutaJadiBot)
+  const readRutaJadiBot = readdirSync(rutaJadiBot)
   if (readRutaJadiBot.length > 0) {
     const creds = 'creds.json'
     for (const gjbts of readRutaJadiBot) {
-      const botPath = join(global.rutaJadiBot, gjbts)
+      const botPath = join(rutaJadiBot, gjbts)
       if (existsSync(botPath) && statSync(botPath).isDirectory()) {
         const readBotPath = readdirSync(botPath)
         if (readBotPath.includes(creds)) {
@@ -335,7 +326,7 @@ if (global.yukiJadibts) {
   }
 }
 
-const pluginFolder = global.__dirname(join(__dirname, './plugins'))
+const pluginFolder = global.__dirname(join(__dirname, './plugins/index'))
 const pluginFilter = (filename) => /\.js$/.test(filename)
 global.plugins = {}
 async function filesInit() {
@@ -386,13 +377,13 @@ await global.reloadHandler()
 // فحص سريع للأدوات
 async function _quickTest() {
   const test = await Promise.all([
-    cp.spawn('ffmpeg'),
-    cp.spawn('ffprobe'),
-    cp.spawn('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-filter_complex', 'color', '-frames:v', '1', '-f', 'webp', '-']),
-    cp.spawn('convert'),
-    cp.spawn('magick'),
-    cp.spawn('gm'),
-    cp.spawn('find', ['--version']),
+    spawn('ffmpeg'),
+    spawn('ffprobe'),
+    spawn('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-filter_complex', 'color', '-frames:v', '1', '-f', 'webp', '-']),
+    spawn('convert'),
+    spawn('magick'),
+    spawn('gm'),
+    spawn('find', ['--version']),
   ].map((p) => {
     return Promise.race([
       new Promise((resolve) => { p.on('close', (code) => { resolve(code !== 127) }) }),
