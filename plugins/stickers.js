@@ -1,7 +1,8 @@
 import axios from 'axios'
 import cheerio from 'cheerio'
 import fs from 'fs'
-import { writeExif } from '../lib/exif.js'
+import exifLib from '../lib/exif.js'
+const { writeExif } = exifLib
 
 export default {
   command: ['stickers', 'searchsticker'],
