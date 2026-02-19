@@ -224,7 +224,7 @@ prefix : new RegExp(strRegex(prefix))
 return [regex.exec(m.text), regex]
 }) : typeof pluginPrefix === "string" ?
 [[new RegExp(strRegex(pluginPrefix)).exec(m.text), new RegExp(strRegex(pluginPrefix))]] :
-[[[], new RegExp]]).find(p => p[0])
+[[[], new RegExp]]).find(p => p[0]) || [[], new RegExp]
 if (typeof plugin.before === "function") {
 if (await plugin.before.call(this, m, {
 match,
@@ -251,7 +251,7 @@ continue
 if (typeof plugin !== "function") {
 continue
 }
-if ((usedPrefix = (match[0] || "")[0])) {
+if ((usedPrefix = (match && match[0] || "")[0])) {
 const noPrefix = m.text.replace(usedPrefix, "")
 let [command, ...args] = noPrefix.trim().split(" ").filter(v => v)
 args = args || []
