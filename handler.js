@@ -7,7 +7,7 @@ import chalk from "chalk"
 import fetch from "node-fetch"
 import ws from "ws"
 
-const { proto } = await import("@whiskeysockets/baileys")
+const { proto } = (await import("@whiskeysockets/baileys")).default || await import("@whiskeysockets/baileys")
 const isNumber = x => typeof x === "number" && !isNaN(x)
 const delay = ms => isNumber(ms) && new Promise(resolve => setTimeout(function () {
 clearTimeout(this)
@@ -116,7 +116,7 @@ jadibotmd: true
 }} catch (e) {
 console.error(e)
 }
-if (typeof m.text !== "string") m.text = ""
+if (typeof m.text !== "string" && !m.message?.interactiveResponseMessage && !m.message?.buttonsResponseMessage && !m.message?.listResponseMessage) m.text = ""
 const user = global.db.data.users[m.sender]
 try {
 const actual = user.name || ""
@@ -158,12 +158,20 @@ groupMetadata = {}
 }
 }
 const participants = (Array.isArray(groupMetadata.participants) ? groupMetadata.participants : []).map(participant => ({ id: participant.jid || participant.id, jid: participant.jid || participant.id, lid: participant.lid, admin: participant.admin }))
-const userGroup = (m.isGroup ? participants.find((u) => conn.decodeJid(u.jid) === m.sender) : {}) || {}
+const senderNum = m.sender?.split('@')[0]
+const userGroup = (m.isGroup ? participants.find((u) => {
+  const uid = u.jid || u.id || ''
+  return conn.decodeJid(uid) === m.sender || uid.split('@')[0] === senderNum
+}) : {}) || {}
 const botJid = conn.decodeJid(this.user.jid)
-const botGroup = (m.isGroup ? participants.find((u) => conn.decodeJid(u.jid) === botJid) : {}) || {}
+const botNum = botJid?.split('@')[0]
+const botGroup = (m.isGroup ? participants.find((u) => {
+  const uid = u.jid || u.id || ''
+  return conn.decodeJid(uid) === botJid || uid.split('@')[0] === botNum
+}) : {}) || {}
 const isRAdmin = userGroup?.admin == "superadmin" || false
-const isAdmin = isRAdmin || userGroup?.admin == "admin" || false
-const isBotAdmin = botGroup?.admin || false
+const isAdmin = isRAdmin || userGroup?.admin == "admin" || userGroup?.admin === true || false
+const isBotAdmin = botGroup?.admin === "superadmin" || botGroup?.admin === "admin" || botGroup?.admin === true || false
 
 const ___dirname = path.join(path.dirname(fileURLToPath(import.meta.url)), "./plugins")
 for (const name in global.plugins) {
@@ -246,7 +254,7 @@ global.comando = command
 if (!isOwners && settings.self) return
 if ((m.id.startsWith("NJX-") || (m.id.startsWith("BAE5") && m.id.length === 16) || (m.id.startsWith("B24E") && m.id.length === 20))) return
 
-if (global.db.data.chats[m.chat].primaryBot && global.db.data.chats[m.chat].primaryBot !== this.user.jid) {
+if (global.db.data.chats[m.chat]?.primaryBot && global.db.data.chats[m.chat]?.primaryBot !== this.user.jid) {
 const primaryBotConn = global.conns.find(conn => conn.user.jid === global.db.data.chats[m.chat].primaryBot && conn.ws.socket && conn.ws.socket.readyState !== ws.CLOSED)
 const participants = m.isGroup ? (await this.groupMetadata(m.chat).catch(() => ({ participants: [] }))).participants : []
 const primaryBotInGroup = participants.some(p => p.jid === global.db.data.chats[m.chat].primaryBot)
@@ -380,7 +388,7 @@ admin: `『✦』El comando *${comando}* solo puede ser usado por los administra
 botAdmin: `『✦』Para ejecutar el comando *${comando}* debo ser administrador del grupo.`,
 restrict: `『✦』Esta caracteristica está desactivada.`
 }[type]
-if (msg) return conn.reply(m.chat, msg, m, rcanal).then(_ => m.react('✖️'))
+if (msg) return conn.reply(m.chat, msg, m, global.rcanal || {}).then(_ => m.react('✖️'))
 }
 let file = global.__filename(import.meta.url, true)
 watchFile(file, async () => {
