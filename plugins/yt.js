@@ -20,7 +20,7 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
   
   const imagurl = 'https://i.ibb.co/wrNvfkBw/whfhy5.jpg';
  
- let chname = '𝙰𝚁𝚃_𝙱𝙾𝚃';
+ let chname = '𝙰𝚛𝚝_𝚋𝚘𝚝';
  let chid = '120363424796176668@newsletter';
   
   const captain = `*⎙ نتائج البحث:* ${results.videos.length}\n\n*⛊ النتيجة:*\n*-› العنوان:* ${randomVideo.title}\n*-› الصانع:* ${randomVideo.author.name}\n*-› المشاهدات:* ${randomVideo.views}\n*-› الرابط:* ${randomVideo.url}\n*-› البوستر:* ${randomVideo.thumbnail}\n\n> 🗃️اختر من القائمه بالاسفل.\n\n`.trim();

@@ -59,7 +59,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
   let profilePic = await conn.profilePictureUrl(target, 'image').catch(_ => './logo.jpg');
   let user = global.db.data.users[target];
 
-  let botname = "𝙰𝚁𝚃_𝙱𝙾𝚃";
+  let botname = "𝙰𝚛𝚝_𝚋𝚘𝚝";
 
   let infoMessage = `
 ╭────〈 ${botname} 〉───

@@ -9,7 +9,7 @@ let fake = {
     remoteJid: '120363405853303400@g.us',
   },
   message: {
-    conversation: '｢🍷┊𝙰𝚁𝚃_𝙱𝙾𝚃┊🍭｣'
+    conversation: '｢🍷┊𝙰𝚛𝚝_𝚋𝚘𝚝┊🍭｣'
   },
   participant: '0@s.whatsapp.net',
 };

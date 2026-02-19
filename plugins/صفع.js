@@ -12,7 +12,7 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
   try {
     let name;
     if (who === m.chat) {
-      name = "*｢🍫┊𝙰𝚁𝚃_𝙱𝙾𝚃┊🍨｣*";
+      name = "*｢🍫┊𝙰𝚛𝚝_𝚋𝚘𝚝┊🍨｣*";
     } else {
       name = conn.getName(who);
     }

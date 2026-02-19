@@ -10,11 +10,11 @@ handler.all = async function (m) {
   let fake = {
     key: {
       fromMe: false,
-      participant: '𝙰𝚁𝚃_𝙱𝙾𝚃@s.whatsapp.net',
+      participant: '𝙰𝚛𝚝_𝚋𝚘𝚝@s.whatsapp.net',
       remoteJid: '120363384250924818@g.us',
     },
     message: {
-      conversation: '｢🩸┊𝙰𝚁𝚃_𝙱𝙾𝚃┊💧｣'
+      conversation: '｢🩸┊𝙰𝚛𝚝_𝚋𝚘𝚝┊💧｣'
     },
     participant: '0@s.whatsapp.net',
   };
@@ -57,7 +57,7 @@ handler.all = async function (m) {
   }
 
   if (/^تستو$/i.test(m.text)) { 
-    conn.reply(m.chat, `*𝙰𝚁𝚃_𝙱𝙾𝚃 فـي الـخدمه 🫡🍀*`, fake);
+    conn.reply(m.chat, `*𝙰𝚛𝚝_𝚋𝚘𝚝 فـي الـخدمه 🫡🍀*`, fake);
   }
 
   if (/^شو تعمل|شو تسوي$/i.test(m.text)) { 

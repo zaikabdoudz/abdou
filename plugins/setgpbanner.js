@@ -1,20 +1,20 @@
-export default {
-  command: ['setgpbanner'],
-  category: 'grupo',
-  isAdmin: true,
-  botAdmin: true,
-  run: async (client, m, args, usedPrefix, command) => {
-    const q = m.quoted ? m.quoted : m
-    const mime = (q.msg || q).mimetype || q.mediaType || ''
-    if (!/image/.test(mime))
-      return m.reply('《✧》 Te faltó la imagen para cambiar el perfil del grupo.')
-    const img = await q.download()
-    if (!img) return m.reply('《✧》 No se pudo descargar la imagen.')
-    try {
-      await client.updateProfilePicture(m.chat, img)
-      m.reply('✿ La imagen del grupo se actualizó con éxito.')
-    } catch (e) {
-      return m.reply(`> An unexpected error occurred while executing command *${usedPrefix + command}*. Please try again or contact support if the issue persists.\n> [Error: *${e.message}*]`)
-    }
-  },
-};
+const handler = async (m, { conn }) => {
+  const q = m.quoted ? m.quoted : m
+  const mime = (q.msg || q).mimetype || q.mediaType || ''
+  if (!/image/.test(mime)) return m.reply('《✧》 أرسل أو رد على صورة لتغيير صورة المجموعة.')
+  const img = await q.download()
+  if (!img) return m.reply('《✧》 تعذر تحميل الصورة.')
+  try {
+    await conn.updateProfilePicture(m.chat, img)
+    m.reply('✿ تم تغيير صورة المجموعة بنجاح.')
+  } catch (e) {
+    return m.reply(`> حدث خطأ: *${e.message}*`)
+  }
+}
+handler.help = ['تغيير_صورة (بالرد على صورة)']
+handler.tags = ['group']
+handler.command = /^(تغيير_صورة|صورة_المجموعة|setgpbanner)$/i
+handler.admin = true
+handler.botAdmin = true
+handler.group = true
+export default handler

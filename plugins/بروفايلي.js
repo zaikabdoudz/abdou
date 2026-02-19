@@ -36,7 +36,7 @@ let handler = async (m, { conn }) => {
 
   let txt = `
 *︶꒷꒦︶ ⭑ ...︶꒷꒦︶ ⭑ ...⊹*
-*𝙰𝚁𝚃_𝙱𝙾𝚃*
+*𝙰𝚛𝚝_𝚋𝚘𝚝*
 *︶꒷꒦︶ ⭑ ...︶꒷꒦︶ ⭑ ...⊹*
 *╮ ⊰✫⊱─⊰✫⊱─⊰✫⊱╭*
 
@@ -59,7 +59,7 @@ let handler = async (m, { conn }) => {
   await conn.sendMessage(m.chat, {
     image: img,
     caption: txt,
-    footer: '𝙰𝚁𝚃_𝙱𝙾𝚃',
+    footer: '𝙰𝚛𝚝_𝚋𝚘𝚝',
     buttons: [
       { buttonId: `.اوامر`, buttonText: { displayText: '⚡ الأوامر' } },
       { buttonId: `.المطور`, buttonText: { displayText: '🩸 المطور' } }

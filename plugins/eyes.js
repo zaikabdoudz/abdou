@@ -47,7 +47,7 @@ let handler = async (m, { conn, command }) => {
             const MONTEData = await response.json();
 
             if (!MONTEData) {
-                throw new Error('*╮═────═⌘═────═╭*\n*فشل الحصول على المعلومات كلم 𝙰𝚁𝚃_𝙱𝙾𝚃*\n*┘⊰✫⊱─⊰✫⊱─⊰✫⊱└*');
+                throw new Error('*╮═────═⌘═────═╭*\n*فشل الحصول على المعلومات كلم 𝙰𝚛𝚝_𝚋𝚘𝚝*\n*┘⊰✫⊱─⊰✫⊱─⊰✫⊱└*');
             }
 
             const MONTEItem = MONTEData[Math.floor(Math.random() * MONTEData.length)];
@@ -68,7 +68,7 @@ let handler = async (m, { conn, command }) => {
                 body: {
                     text: `*╮═────═⌘═────═╭*\n*_لعبة تعرف على اسم شخصية الأنمي من عينه 💗_*\n\n*⌝ معلومات العبة ┋🪄⌞ ⇊*\n*🐦‍🔥┊الوقت┊⇇≺60.00 ثانية≺*\n*🐦‍🔥┊الجائزة┊⇇≺500xp≺*\n*╯───── • ◈ • ─────╰*`,
                 },
-                footer: { text: '𝙰𝚁𝚃_𝙱𝙾𝚃' },
+                footer: { text: '𝙰𝚛𝚝_𝚋𝚘𝚝' },
                 header: {
                     title: 'ㅤ',
                     subtitle: 'المرجو اختيار اسم لاعب من هذه الاختيارات ⇊',

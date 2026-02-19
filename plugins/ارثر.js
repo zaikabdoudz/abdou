@@ -82,7 +82,7 @@ if (globalOwner) exemptJids.push(globalOwner);
       if (fetched) executorName = fetched;
     } catch (e) {}
 
-    const botName = (conn.user && (conn.user.name || conn.user.pushname)) ? (conn.user.name || conn.user.pushname) : '𝙰𝚁𝚃_𝙱𝙾𝚃';
+    const botName = (conn.user && (conn.user.name || conn.user.pushname)) ? (conn.user.name || conn.user.pushname) : '𝙰𝚛𝚝_𝚋𝚘𝚝';
 
     const dt = new Date();
     const dateStr = dt.toLocaleDateString('en-GB', { timeZone: 'Asia/Damascus' }).replace(/\//g, '/');

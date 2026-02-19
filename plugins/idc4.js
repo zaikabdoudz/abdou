@@ -203,7 +203,7 @@ async function startNewQuestion(conn, m, id, level, src) {
 
     let shanks1 = 'https://qu.ax/Cnbf.jpg';
 
-    await conn.sendButton(m.chat, message, '> ◜𝙰𝚁𝚃_𝙱𝙾𝚃🌋', shanks1, [
+    await conn.sendButton(m.chat, message, '> ◜𝙰𝚛𝚝_𝚋𝚘𝚝🌋', shanks1, [
         [`①: ${options[0]}`, `.المليون ${options[0]}`],
         [`②: ${options[1]}`, `.المليون ${options[1]}`],
         [`③: ${options[2]}`, `.المليون ${options[2]}`],

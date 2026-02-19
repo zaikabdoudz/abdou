@@ -4,7 +4,7 @@ let handler = async (m, { conn, isPrems}) => {
     let time = global.db.data.users[m.sender].lastmiming + 600000
     if (new Date - global.db.data.users[m.sender].lastmiming < 600000) throw `*⏰ يجب أن تنتظر ${msToTime(time - new Date())} قبل أن تتمكن من التعدين مرة أخرى*`
 
-    conn.fakeReply(m.chat, info, '0@s.whatsapp.net', '*｢🍀┊𝙰𝚁𝚃_𝙱𝙾𝚃┊🍀｣*', 'status@broadcast')
+    conn.fakeReply(m.chat, info, '0@s.whatsapp.net', '*｢🍀┊𝙰𝚛𝚝_𝚋𝚘𝚝┊🍀｣*', 'status@broadcast')
     m.react('⛏️')   
     // m.reply(`*[ 🎉 ] رائع، حصلت على ${hasil} XP*`)
     global.db.data.users[m.sender].lastmiming = new Date * 1

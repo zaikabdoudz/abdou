@@ -31,7 +31,7 @@ export async function before(m, { conn }) {
           mediaUrl: 'https://i.ibb.co/4wHzjmxT/7a052570ab3ff310ea7169ddf78c05fb.jpg',
           mediaType: 1,
           description: 'ιтαcнι вσт',
-          title: '𝙰𝚁𝚃_𝙱𝙾𝚃',
+          title: '𝙰𝚛𝚝_𝚋𝚘𝚝',
           body: '💖 بوت فائق لواتساب 🥳',
           thumbnail: img.getRandom(),
           sourceUrl: redes.getRandom()

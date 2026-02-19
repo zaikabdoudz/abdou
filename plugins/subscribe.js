@@ -9,10 +9,10 @@ const handler = async (m, { conn }) => {
     );
 
     const interactiveMessage = {
-        body: { text: "✨ *𓆩 𝙰𝚁𝚃_𝙱𝙾𝚃 ⌯ اختر نوع الاشتراك الذي تريده ⌯ 💎* ✨" },
-        footer: { text: "𝙰𝚁𝚃_𝙱𝙾𝚃" },
+        body: { text: "✨ *𓆩 𝙰𝚛𝚝_𝚋𝚘𝚝 ⌯ اختر نوع الاشتراك الذي تريده ⌯ 💎* ✨" },
+        footer: { text: "𝙰𝚛𝚝_𝚋𝚘𝚝" },
         header: {
-            title: "╭───⟢❲ 💖 𝙰𝚁𝚃_𝙱𝙾𝚃 💖 ❳╰───⟢",
+            title: "╭───⟢❲ 💖 𝙰𝚛𝚝_𝚋𝚘𝚝 💖 ❳╰───⟢",
             hasMediaAttachment: true,
             imageMessage: messa.imageMessage,
         },
@@ -27,7 +27,7 @@ const handler = async (m, { conn }) => {
                                 title: "🎀 هل تريد البوت في جروبك؟ 🎀",
                                 rows: [
                                     {
-                                        header: "🤖 𝙰𝚁𝚃_𝙱𝙾𝚃 في جروبك",
+                                        header: "🤖 𝙰𝚛𝚝_𝚋𝚘𝚝 في جروبك",
                                         title: "📌 إضافة البوت لجروبك",
                                         description: "🔹 السعر:\n🌍 الدول: رقم وهمي\n💎 الاشتراك: دائم",
                                         id: ".اشتراك_جروب"
@@ -38,7 +38,7 @@ const handler = async (m, { conn }) => {
                                 title: "🏰 هل تريد البوت لمملكتك؟ 🏰",
                                 rows: [
                                     {
-                                        header: "👑 𝙰𝚁𝚃_𝙱𝙾𝚃 لمملكتك",
+                                        header: "👑 𝙰𝚛𝚝_𝚋𝚘𝚝 لمملكتك",
                                         title: "🏆 اشتراك للممالك",
                                         description: "🔹 السعر:\n🌍 باقي الدول: رقمين وهميين",
                                         id: ".اشتراك_مملكة"
@@ -49,7 +49,7 @@ const handler = async (m, { conn }) => {
                                 title: "💻 هل تريد السكربت الخاص بالبوت؟ 💻",
                                 rows: [
                                     {
-                                        header: "🛠️ سكربت 𝙰𝚁𝚃_𝙱𝙾𝚃",
+                                        header: "🛠️ سكربت 𝙰𝚛𝚝_𝚋𝚘𝚝",
                                         title: "🎯 شراء السكربت",
                                         description: "🔹 السعر:\n🌍 باقي الدول: 4 دولار",
                                         id: ".اشتراك_سكربت"
