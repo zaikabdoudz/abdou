@@ -12,8 +12,8 @@ const handler = async (m, { conn }) => {
   await conn.sendMessage(m.chat, { react: { text: '📂', key: m.key } })
 
   const randomImage = [
-    'https://files.catbox.moe/ziws8j.jpg',
-    'https://files.catbox.moe/57nt4f.jpg'
+    'https://i.ibb.co/4wg51yy4/ace035324a42aaef69b3d28dab574bee.jpg',
+    'https://i.ibb.co/YFTWFRT8/1e84a843b8a32f999071924613ba1cf2.jpg'
   ][Math.floor(Math.random() * 2)]
 
   const menuText = `

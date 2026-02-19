@@ -315,7 +315,7 @@ const tips = [
    
 ] 
 const randomImage = tips[Math.floor(Math.random() * tips.length)];
-   var messa = await prepareWAMessageMedia({ image: { url:'https://files.catbox.moe/9hh3k4.jpg' } }, { upload: conn.waUploadToServer, logger: console });
+   var messa = await prepareWAMessageMedia({ image: { url:'https://i.ibb.co/7Nz6ttGP/9hh3k4.jpg' } }, { upload: conn.waUploadToServer, logger: console });
 let msg = generateWAMessageFromContent(m.chat, {
   viewOnceMessage: {
     message: {

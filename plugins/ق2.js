@@ -37,7 +37,7 @@ let handler = async (m, { conn }) => {
     // إرسال الفيديو مع النص
     await await conn.sendMessage(m.chat, { 
   image: { 
-    url: 'https://files.catbox.moe/vkasct.jpg' 
+    url: 'https://i.ibb.co/rfvSkDgy/c101736b87e78646a64c08c78f6891fa.jpg' 
   }, 
   caption: message, 
   mentions: [m.sender] 

@@ -37,7 +37,7 @@ let handler = async (m, { isOwner, isAdmin, conn, text, participants, args, comm
 
   // القائمة التفاعلية الرئيسية للمنشن (محسّنة للتوافق مع إصدارات واتساب الجديدة)
   if (command === 'منشن') {
-    const coverImageUrl = 'https://files.catbox.moe/ziws8j.jpg';
+    const coverImageUrl = 'https://i.ibb.co/4wg51yy4/ace035324a42aaef69b3d28dab574bee.jpg';
     const messa = await prepareWAMessageMedia(
       { image: { url: coverImageUrl } },
       { upload: conn.waUploadToServer, logger: console }

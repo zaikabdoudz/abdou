@@ -32,6 +32,7 @@ global.yukiJadibts = true
 global.botname = "𝙰𝚁𝚃_𝙱𝙾𝚃"
 global.textbot = "BY 『 𝙰𝙱𝙳𝙾𝚄 』"
 global.dev = "© ⍴᥆ᥕᥱrᥱძ ᑲᥡ 𝙰𝙱𝙳𝙾𝚄"
+global.wm = `${global.botname} • ${global.dev}`
 global.author = "© mᥲძᥱ ᥕі𝗍һ ᑲᥡ 𝙰𝙱𝙳𝙾𝚄"
 global.etiqueta = "𝙰𝙱𝙳𝙾𝚄"
 global.currency = "𝙰𝚁𝚃𝙷𝚄𝚁"

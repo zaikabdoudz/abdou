@@ -16,7 +16,7 @@ export async function participantsUpdate({ id, participants, action }) {
                 try {
                     profilePicUrl = await conn.profilePictureUrl(user, 'image'); // جلب صورة البروفايل
                 } catch {
-                    profilePicUrl = 'https://files.catbox.moe/ziws8j.jpg'; // صورة افتراضية في حال لم تكن هناك صورة
+                    profilePicUrl = 'https://i.ibb.co/4wg51yy4/ace035324a42aaef69b3d28dab574bee.jpg'; // صورة افتراضية في حال لم تكن هناك صورة
                 }
 
                 let byeMessage = `*┏━━⊱❰ 🍄 وداعاً 🍄 ❱⊰━━┓*\n` +

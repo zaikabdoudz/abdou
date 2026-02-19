@@ -1,7 +1,7 @@
 import { prepareWAMessageMedia, generateWAMessageFromContent } from "@whiskeysockets/baileys";
 
 const handler = async (m, { conn }) => {
-    const coverImageUrl = 'https://files.catbox.moe/ziws8j.jpg'; // صورة الاشتراك
+    const coverImageUrl = 'https://i.ibb.co/4wg51yy4/ace035324a42aaef69b3d28dab574bee.jpg'; // صورة الاشتراك
 
     const messa = await prepareWAMessageMedia(
         { image: { url: coverImageUrl } },

@@ -28,7 +28,7 @@ export async function before(m, { conn }) {
     await conn.reply(m.chat, messages[Math.floor(Math.random() * messages.length)], m, {
       contextInfo: {
         externalAdReply: {
-          mediaUrl: 'https://files.catbox.moe/rldpy4.jpg',
+          mediaUrl: 'https://i.ibb.co/4wHzjmxT/7a052570ab3ff310ea7169ddf78c05fb.jpg',
           mediaType: 1,
           description: 'ιтαcнι вσт',
           title: '𝙰𝚁𝚃_𝙱𝙾𝚃',

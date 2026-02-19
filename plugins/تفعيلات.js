@@ -2,9 +2,9 @@
 // ملف: plugins/enable.js
 
 const IMAGES = [
-  'https://files.catbox.moe/bxvker.jpg',
-  'https://files.catbox.moe/vnnzpf.jpg',
-  'https://files.catbox.moe/vss05f.jpg'
+  'https://i.ibb.co/q3gzj4QN/d28c5b4aa87fdc85670eddaa5c8edb48.jpg',
+  'https://i.ibb.co/nMzFDp2X/d6be75c059e902d71a3bc44e47358d1e.jpg',
+  'https://i.ibb.co/XkM2m8w4/928e84a8247bfd417d13395f22014350.jpg'
 ]
 
 // دالة حفظ آمنة للـ DB (لو موجودة)

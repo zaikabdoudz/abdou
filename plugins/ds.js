@@ -13,7 +13,7 @@ const handler = async (m, { conn, text }) => {
 
   // 🔹 إذا لم يُحدد خيار، إرسال زر تفاعلي
   if (!text) {
-    const coverImageUrl = 'https://files.catbox.moe/ziws8j.jpg';
+    const coverImageUrl = 'https://i.ibb.co/4wg51yy4/ace035324a42aaef69b3d28dab574bee.jpg';
     const messa = await prepareWAMessageMedia(
       { image: { url: coverImageUrl } },
       { upload: conn.waUploadToServer, logger: console }

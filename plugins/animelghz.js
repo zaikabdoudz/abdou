@@ -4,7 +4,7 @@ import { prepareWAMessageMedia, generateWAMessageFromContent } from "@whiskeysoc
 
 const timeout = 60000; // الوقت المسموح للإجابة
 const points = 500; // الجائزة
-const THUMB_URL = "https://files.catbox.moe/ms4bml.jpg"; // صورة العرض
+const THUMB_URL = "https://i.ibb.co/mVsBVkMd/ms4bml.jpg"; // صورة العرض
 
 let handler = async (m, { conn, command }) => {
   if (command.startsWith("انمي_")) {

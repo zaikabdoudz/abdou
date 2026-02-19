@@ -46,7 +46,7 @@ _*⚕️┊شـرح اوامـر الاديـت↶*_
     await conn.sendMessage(m.chat, { react: { text: emojiReaction, key: m.key } });
 
     await conn.sendMessage(m.chat, { 
-      image: { url: 'https://files.catbox.moe/vkasct.jpg' },
+      image: { url: 'https://i.ibb.co/chwPHLrM/9bcc2968d269a9d8d8c7e6bf7a56279d.jpg' },
       caption: message,
       mentions: [m.sender]
     });

@@ -14,7 +14,7 @@ async function handler(m, { conn, groupMetadata }) {
     } while (b === a);
 
     // رابط الصورة الذي تريده
-    const fgytSrdf = 'https://files.catbox.moe/uw5stm.jpg';
+    const fgytSrdf = 'https://i.ibb.co/359rstL4/eb66c95129b13e40fe20b76e154ae2b8.jpg';
 
     // إرسال الصورة مع الكابشن
     await conn.sendFile(m.chat, fgytSrdf, 'image.jpg', 

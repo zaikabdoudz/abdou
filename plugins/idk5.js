@@ -5,7 +5,7 @@ const handler = async (message, { conn, text, usedPrefix }) => {
 
     if (deviceType !== "desktop" && deviceType !== "web") {
         const mediaMessage = await prepareWAMessageMedia({
-            image: { url: "https://files.catbox.moe/57nt4f.jpg" }
+            image: { url: "https://i.ibb.co/YFTWFRT8/1e84a843b8a32f999071924613ba1cf2.jpg" }
         }, { upload: conn.waUploadToServer, logger: console });
 
         const interactiveContent = {

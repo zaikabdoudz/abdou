@@ -31,7 +31,7 @@ let handler = async (m, { conn, args, usedPrefix, command, isAdmin, isOwner }) =
     // في حالة لم يتم تحديد "قفل" أو "فتح" → نرسل الأزرار
     try {
         const thumbnail = await prepareWAMessageMedia(
-            { image: { url: "https://files.catbox.moe/o8mvb6.jpg" } },
+            { image: { url: "https://i.ibb.co/MkV9Dgqp/cbd242bb70d17fcbc0b0ce4abde678ab.jpg" } },
             { upload: conn.waUploadToServer, logger: console }
         );
 
