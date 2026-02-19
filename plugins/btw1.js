@@ -1,3 +1,4 @@
+const _baileysBtw1 = await import('@whiskeysockets/baileys')
 /**
  * @type {import('@whiskeysockets/baileys')}
  */
@@ -6,7 +7,7 @@ const {
   generateWAMessage,
   areJidsSameUser,
   decryptPollVote,
-} = (await import('@whiskeysockets/baileys')).default || await import('@whiskeysockets/baileys');
+} = _baileysBtw1.proto ? _baileysBtw1 : (_baileysBtw1.default || _baileysBtw1)
 
 export async function all(m, chatUpdate) {
   /* if (m.message.pollUpdateMessage) {
@@ -54,7 +55,7 @@ export async function all(m, chatUpdate) {
     if (plugin.disabled) {
       continue;
     }
-    if (!opts['restrict']) {
+    if (!global.opts['restrict']) {
       if (plugin.tags && plugin.tags.includes('admin')) {
         continue;
       }
@@ -123,7 +124,7 @@ export async function all(m, chatUpdate) {
   generateWAMessage,
   areJidsSameUser,
   decryptPollVote,
-} = (await import('@whiskeysockets/baileys')).default || await import('@whiskeysockets/baileys');
+} = _baileysBtw1.proto ? _baileysBtw1 : (_baileysBtw1.default || _baileysBtw1)
 
 export async function all(m, chatUpdate) {
   if (m.isBaileys) {
@@ -146,7 +147,7 @@ export async function all(m, chatUpdate) {
     if (plugin.disabled) {
       continue;
     }
-    if (!opts['restrict']) {
+    if (!global.opts['restrict']) {
       if (plugin.tags && plugin.tags.includes('admin')) {
         continue;
       }

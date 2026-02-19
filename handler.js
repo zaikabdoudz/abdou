@@ -146,7 +146,7 @@ m.exp += Math.ceil(Math.random() * 10)
 let usedPrefix
 
 // ✅ إصلاح LID: مطابقة المشاركين بـ phoneNumber أو jid أو الرقم
-const _rawMeta = m.isGroup ? (await this.groupMetadata(m.chat).catch(_ => null) || conn.chats[m.chat]?.metadata || {}) : {}
+const _rawMeta = m.isGroup ? (await this.groupMetadata(m.chat).catch(_ => null) || this.chats[m.chat]?.metadata || {}) : {}
 
 // نبني قائمة مشاركين مع الأرقام الحقيقية
 const _rawParticipants = (_rawMeta.participants || []).map(p => {
@@ -169,7 +169,7 @@ const participants = (m.isGroup ? _rawParticipants : []).map(p => ({
 }))
 
 const senderNum = m.sender?.split('@')[0]
-const botJid = conn.decodeJid(this.user.jid)
+const botJid = this.decodeJid(this.user.jid)
 const botNum = botJid?.split('@')[0]
 
 // البحث عن المرسل - نتحقق من الرقم أو الـ JID كامل
@@ -214,7 +214,7 @@ if (plugin.tags && plugin.tags.includes("admin")) {
 continue
 }
 const strRegex = (str) => str.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&")
-const pluginPrefix = plugin.customPrefix || conn.prefix || global.prefix
+const pluginPrefix = plugin.customPrefix || this.prefix || global.prefix
 const match = (pluginPrefix instanceof RegExp ?
 [[pluginPrefix.exec(m.text), pluginPrefix]] :
 Array.isArray(pluginPrefix) ?
@@ -224,7 +224,7 @@ prefix : new RegExp(strRegex(prefix))
 return [regex.exec(m.text), regex]
 }) : typeof pluginPrefix === "string" ?
 [[new RegExp(strRegex(pluginPrefix)).exec(m.text), new RegExp(strRegex(pluginPrefix))]] :
-[[[], new RegExp]]).find(prefix => prefix[1])
+[[[], new RegExp]]).find(p => p[0])
 if (typeof plugin.before === "function") {
 if (await plugin.before.call(this, m, {
 match,
@@ -272,9 +272,9 @@ if (!isOwners && settings.self) return
 if ((m.id.startsWith("NJX-") || (m.id.startsWith("BAE5") && m.id.length === 16) || (m.id.startsWith("B24E") && m.id.length === 20))) return
 
 if (global.db.data.chats[m.chat].primaryBot && global.db.data.chats[m.chat].primaryBot !== this.user.jid) {
-const primaryBotConn = global.conns.find(conn => conn.user.jid === global.db.data.chats[m.chat].primaryBot && conn.ws.socket && conn.ws.socket.readyState !== ws.CLOSED)
-const participants = m.isGroup ? (await this.groupMetadata(m.chat).catch(() => ({ participants: [] }))).participants : []
-const primaryBotInGroup = participants.some(p => p.jid === global.db.data.chats[m.chat].primaryBot)
+const primaryBotConn = global.conns?.find(conn => conn.user.jid === global.db.data.chats[m.chat].primaryBot && conn.ws?.socket && conn.ws.socket.readyState !== ws.CLOSED)
+const _primaryParticipants = m.isGroup ? (await this.groupMetadata(m.chat).catch(() => ({ participants: [] }))).participants : []
+const primaryBotInGroup = _primaryParticipants.some(p => p.jid === global.db.data.chats[m.chat].primaryBot)
 if (primaryBotConn && primaryBotInGroup || global.db.data.chats[m.chat].primaryBot === global.conn.user.jid) {
 throw !1
 } else {
@@ -290,7 +290,7 @@ const botId = this.user.jid
 const primaryBotId = chat.primaryBot
 if (name !== "group-banchat.js" && chat?.isBanned && !isROwner) {
 if (!primaryBotId || primaryBotId === botId) {
-const aviso = `ꕥ El bot *${botname}* está desactivado en este grupo\n\n> ✦ Un *administrador* puede activarlo con el comando:\n> » *${usedPrefix}bot on*`.trim()
+const aviso = `ꕥ El bot *${global.botname || this.user.name || 'Bot'}* está desactivado en este grupo\n\n> ✦ Un *administrador* puede activarlo con el comando:\n> » *${usedPrefix}bot on*`.trim()
 await m.reply(aviso)
 return
 }}
@@ -381,13 +381,13 @@ const quequeIndex = this.msgqueque.indexOf(m.id || m.key.id)
 if (quequeIndex !== -1)
 this.msgqueque.splice(quequeIndex, 1)
 }
-let user, stats = global.db.data.stats
+let user
 if (m) {
 if (m.sender && (user = global.db.data.users[m.sender])) {
 user.exp += m.exp
 }}
 try {
-if (!opts["noprint"]) await (await import("./lib/print.js")).default(m, this)
+if (!global.opts["noprint"]) await (await import("./lib/print.js")).default(m, this)
 } catch (err) {
 console.warn(err)
 console.log(m.message)

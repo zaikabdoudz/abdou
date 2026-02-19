@@ -1,5 +1,5 @@
-import pkg from '@whiskeysockets/baileys';
-const { generateWAMessageFromContent, proto, prepareWAMessageMedia } = pkg
+const _baileysPkg = await import('@whiskeysockets/baileys')
+const { generateWAMessageFromContent, proto, prepareWAMessageMedia } = _baileysPkg.proto ? _baileysPkg : (_baileysPkg.default || _baileysPkg)
 
 var handler = async (m, { conn, usedPrefix }) => {
 const tips = [
