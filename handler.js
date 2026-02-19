@@ -116,7 +116,7 @@ jadibotmd: true
 }} catch (e) {
 console.error(e)
 }
-if (typeof m.text !== "string" && !m.message?.interactiveResponseMessage && !m.message?.buttonsResponseMessage && !m.message?.listResponseMessage) m.text = ""
+if (typeof m.text !== "string") m.text = ""
 const user = global.db.data.users[m.sender]
 try {
 const actual = user.name || ""
@@ -140,17 +140,26 @@ await delay(time)
 }, time)
 }
  
-const isButtonResponse = m.message?.interactiveResponseMessage || m.message?.buttonsResponseMessage || m.message?.listResponseMessage
-if (m.isBaileys && !isButtonResponse) return
+if (m.isBaileys) return
 m.exp += Math.ceil(Math.random() * 10)
 let usedPrefix
-const groupMetadata = m.isGroup ? { ...(conn.chats[m.chat]?.metadata || await this.groupMetadata(m.chat).catch(_ => null) || {}), ...(((conn.chats[m.chat]?.metadata || await this.groupMetadata(m.chat).catch(_ => null) || {}).participants) && { participants: ((conn.chats[m.chat]?.metadata || await this.groupMetadata(m.chat).catch(_ => null) || {}).participants || []).map(p => ({ ...p, id: p.jid, jid: p.jid, lid: p.lid })) }) } : {}
-const participants = ((m.isGroup ? groupMetadata.participants : []) || []).map(participant => ({ id: participant.jid, jid: participant.jid, lid: participant.lid, admin: participant.admin }))
-const userGroup = (m.isGroup ? participants.find((u) => conn.decodeJid(u.jid) === m.sender) : {}) || {}
-const botGroup = (m.isGroup ? participants.find((u) => conn.decodeJid(u.jid) == this.user.jid) : {}) || {}
+const _rawMeta = m.isGroup ? (conn.chats[m.chat]?.metadata || await this.groupMetadata(m.chat).catch(_ => null) || {}) : {}
+// ✅ إصلاح BailMod: participants يستخدم phoneNumber بدل jid
+const _rawParticipants = (_rawMeta.participants || []).map(p => ({
+  ...p,
+  jid: p.phoneNumber || p.jid || p.id || '',
+  id: p.phoneNumber || p.jid || p.id || '',
+  admin: p.admin || null
+}))
+const groupMetadata = m.isGroup ? { ..._rawMeta, participants: _rawParticipants } : {}
+const participants = (m.isGroup ? _rawParticipants : []).map(p => ({ id: p.jid, jid: p.jid, lid: p.id, admin: p.admin }))
+const senderNum = m.sender?.split('@')[0]
+const botNum = (conn.decodeJid(this.user.jid))?.split('@')[0]
+const userGroup = (m.isGroup ? participants.find(u => u.jid?.split('@')[0] === senderNum) : {}) || {}
+const botGroup = (m.isGroup ? participants.find(u => u.jid?.split('@')[0] === botNum) : {}) || {}
 const isRAdmin = userGroup?.admin == "superadmin" || false
 const isAdmin = isRAdmin || userGroup?.admin == "admin" || false
-const isBotAdmin = botGroup?.admin || false
+const isBotAdmin = botGroup?.admin === "superadmin" || botGroup?.admin === "admin" || false
 
 const ___dirname = path.join(path.dirname(fileURLToPath(import.meta.url)), "./plugins")
 for (const name in global.plugins) {
@@ -213,7 +222,7 @@ continue
 if (typeof plugin !== "function") {
 continue
 }
-if ((usedPrefix = (match && match[0] || "")[0])) {
+if ((usedPrefix = (match[0] || "")[0])) {
 const noPrefix = m.text.replace(usedPrefix, "")
 let [command, ...args] = noPrefix.trim().split(" ").filter(v => v)
 args = args || []
@@ -233,7 +242,7 @@ global.comando = command
 if (!isOwners && settings.self) return
 if ((m.id.startsWith("NJX-") || (m.id.startsWith("BAE5") && m.id.length === 16) || (m.id.startsWith("B24E") && m.id.length === 20))) return
 
-if (global.db.data.chats[m.chat]?.primaryBot && global.db.data.chats[m.chat]?.primaryBot !== this.user.jid) {
+if (global.db.data.chats[m.chat].primaryBot && global.db.data.chats[m.chat].primaryBot !== this.user.jid) {
 const primaryBotConn = global.conns.find(conn => conn.user.jid === global.db.data.chats[m.chat].primaryBot && conn.ws.socket && conn.ws.socket.readyState !== ws.CLOSED)
 const participants = m.isGroup ? (await this.groupMetadata(m.chat).catch(() => ({ participants: [] }))).participants : []
 const primaryBotInGroup = participants.some(p => p.jid === global.db.data.chats[m.chat].primaryBot)
@@ -367,7 +376,7 @@ admin: `『✦』El comando *${comando}* solo puede ser usado por los administra
 botAdmin: `『✦』Para ejecutar el comando *${comando}* debo ser administrador del grupo.`,
 restrict: `『✦』Esta caracteristica está desactivada.`
 }[type]
-if (msg) return conn.reply(m.chat, msg, m, global.rcanal || {}).then(_ => m.react('✖️'))
+if (msg) return conn.reply(m.chat, msg, m, rcanal).then(_ => m.react('✖️'))
 }
 let file = global.__filename(import.meta.url, true)
 watchFile(file, async () => {
