@@ -143,8 +143,8 @@ await delay(time)
 if (m.isBaileys) return
 m.exp += Math.ceil(Math.random() * 10)
 let usedPrefix
-const _rawMeta = m.isGroup ? (conn.chats[m.chat]?.metadata || await this.groupMetadata(m.chat).catch(_ => null) || {}) : {}
-// ✅ إصلاح BailMod: participants يستخدم phoneNumber بدل jid
+// ✅ إصلاح BailMod: دائماً جلب من السيرفر + استخدام phoneNumber
+const _rawMeta = m.isGroup ? (await this.groupMetadata(m.chat).catch(_ => null) || conn.chats[m.chat]?.metadata || {}) : {}
 const _rawParticipants = (_rawMeta.participants || []).map(p => ({
   ...p,
   jid: p.phoneNumber || p.jid || p.id || '',
@@ -154,7 +154,7 @@ const _rawParticipants = (_rawMeta.participants || []).map(p => ({
 const groupMetadata = m.isGroup ? { ..._rawMeta, participants: _rawParticipants } : {}
 const participants = (m.isGroup ? _rawParticipants : []).map(p => ({ id: p.jid, jid: p.jid, lid: p.id, admin: p.admin }))
 const senderNum = m.sender?.split('@')[0]
-const botNum = (conn.decodeJid(this.user.jid))?.split('@')[0]
+const botNum = conn.decodeJid(this.user.jid)?.split('@')[0]
 const userGroup = (m.isGroup ? participants.find(u => u.jid?.split('@')[0] === senderNum) : {}) || {}
 const botGroup = (m.isGroup ? participants.find(u => u.jid?.split('@')[0] === botNum) : {}) || {}
 const isRAdmin = userGroup?.admin == "superadmin" || false
