@@ -7,7 +7,7 @@ import chalk from "chalk"
 import fetch from "node-fetch"
 import ws from "ws"
 
-const { proto } = (await import("@whiskeysockets/baileys")).default || await import("@whiskeysockets/baileys")
+const { proto } = (await import("@whiskeysockets/baileys")).default
 const isNumber = x => typeof x === "number" && !isNaN(x)
 const delay = ms => isNumber(ms) && new Promise(resolve => setTimeout(function () {
 clearTimeout(this)
@@ -140,38 +140,17 @@ await delay(time)
 }, time)
 }
  
-// السماح لردود الأزرار بالمرور
 const isButtonResponse = m.message?.interactiveResponseMessage || m.message?.buttonsResponseMessage || m.message?.listResponseMessage
 if (m.isBaileys && !isButtonResponse) return
 m.exp += Math.ceil(Math.random() * 10)
 let usedPrefix
-let groupMetadata = {}
-if (m.isGroup) {
-try {
-const cachedMeta = conn.chats[m.chat]?.metadata || null
-const fetchedMeta = cachedMeta || await this.groupMetadata(m.chat).catch(_ => null) || {}
-const rawParticipants = (fetchedMeta.participants || []).map(p => ({ ...p, id: p.jid || p.id, jid: p.jid || p.id, lid: p.lid }))
-groupMetadata = { ...fetchedMeta, participants: rawParticipants }
-} catch (e) {
-console.error("groupMetadata error:", e)
-groupMetadata = {}
-}
-}
-const participants = (Array.isArray(groupMetadata.participants) ? groupMetadata.participants : []).map(participant => ({ id: participant.jid || participant.id, jid: participant.jid || participant.id, lid: participant.lid, admin: participant.admin }))
-const senderNum = m.sender?.split('@')[0]
-const userGroup = (m.isGroup ? participants.find((u) => {
-  const uid = u.jid || u.id || ''
-  return conn.decodeJid(uid) === m.sender || uid.split('@')[0] === senderNum
-}) : {}) || {}
-const botJid = conn.decodeJid(this.user.jid)
-const botNum = botJid?.split('@')[0]
-const botGroup = (m.isGroup ? participants.find((u) => {
-  const uid = u.jid || u.id || ''
-  return conn.decodeJid(uid) === botJid || uid.split('@')[0] === botNum
-}) : {}) || {}
+const groupMetadata = m.isGroup ? { ...(conn.chats[m.chat]?.metadata || await this.groupMetadata(m.chat).catch(_ => null) || {}), ...(((conn.chats[m.chat]?.metadata || await this.groupMetadata(m.chat).catch(_ => null) || {}).participants) && { participants: ((conn.chats[m.chat]?.metadata || await this.groupMetadata(m.chat).catch(_ => null) || {}).participants || []).map(p => ({ ...p, id: p.jid, jid: p.jid, lid: p.lid })) }) } : {}
+const participants = ((m.isGroup ? groupMetadata.participants : []) || []).map(participant => ({ id: participant.jid, jid: participant.jid, lid: participant.lid, admin: participant.admin }))
+const userGroup = (m.isGroup ? participants.find((u) => conn.decodeJid(u.jid) === m.sender) : {}) || {}
+const botGroup = (m.isGroup ? participants.find((u) => conn.decodeJid(u.jid) == this.user.jid) : {}) || {}
 const isRAdmin = userGroup?.admin == "superadmin" || false
-const isAdmin = isRAdmin || userGroup?.admin == "admin" || userGroup?.admin === true || false
-const isBotAdmin = botGroup?.admin === "superadmin" || botGroup?.admin === "admin" || botGroup?.admin === true || false
+const isAdmin = isRAdmin || userGroup?.admin == "admin" || false
+const isBotAdmin = botGroup?.admin || false
 
 const ___dirname = path.join(path.dirname(fileURLToPath(import.meta.url)), "./plugins")
 for (const name in global.plugins) {
@@ -207,7 +186,7 @@ prefix : new RegExp(strRegex(prefix))
 return [regex.exec(m.text), regex]
 }) : typeof pluginPrefix === "string" ?
 [[new RegExp(strRegex(pluginPrefix)).exec(m.text), new RegExp(strRegex(pluginPrefix))]] :
-[[[], new RegExp]]).find(prefix => prefix[0])
+[[[], new RegExp]]).find(prefix => prefix[1])
 if (typeof plugin.before === "function") {
 if (await plugin.before.call(this, m, {
 match,
@@ -283,7 +262,7 @@ if (!primaryBotId || primaryBotId === botId) {
 m.reply(mensaje)
 return
 }}}
-// Allow all commands in private and group chats
+if (!isOwners && !m.chat.endsWith('g.us') && !/code|p|ping|qr|estado|status|infobot|botinfo|report|reportar|invite|join|logout|suggest|help|menu/gim.test(m.text)) return
 const adminMode = chat.modoadmin || false
 const wa = plugin.botAdmin || plugin.admin || plugin.group || plugin || noPrefix || pluginPrefix || m.text.slice(0, 1) === pluginPrefix || plugin.command
 if (adminMode && !isOwner && m.isGroup && !isAdmin && wa) return
