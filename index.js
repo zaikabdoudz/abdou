@@ -7,6 +7,8 @@ import { fileURLToPath, pathToFileURL } from 'url'
 import { platform } from 'process'
 import * as ws from 'ws'
 import fs, { readdirSync, statSync, unlinkSync, existsSync, mkdirSync, readFileSync, rmSync, watch } from 'fs'
+import os from 'os'
+import { spawn as cpSpawn, execSync } from 'child_process'
 import yargs from 'yargs'
 import { spawn, execSync } from 'child_process'
 import lodash from 'lodash'
@@ -20,7 +22,7 @@ import { Boom } from '@hapi/boom'
 import { makeWASocket, protoType, serialize } from './lib/simple.js'
 import { Low, JSONFile } from 'lowdb'
 import store from './lib/store.js'
-const { proto } = (await import('@whiskeysockets/baileys')).default
+const { proto } = await import('@whiskeysockets/baileys')
 import pkg from 'google-libphonenumber'
 const { PhoneNumberUtil } = pkg
 const phoneUtil = PhoneNumberUtil.getInstance()
@@ -227,8 +229,8 @@ if (!global.opts['test']) {
   if (global.db) setInterval(async () => {
     if (global.db.data) await global.db.write()
     if (global.opts['autocleartmp'] && (global.support || {}).find) {
-      const tmp = [os.tmpdir(), 'tmp', `${jadi}`]
-      tmp.forEach((filename) => cp.spawn('find', [filename, '-amin', '3', '-type', 'f', '-delete']))
+      const tmp = [os.tmpdir(), 'tmp']
+      tmp.forEach((filename) => spawn('find', [filename, '-amin', '3', '-type', 'f', '-delete']))
     }
   }, 30 * 1000)
 }
@@ -303,6 +305,7 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error("Rechazo no manejado detectado:", reason)
 })
 
+const jadi = global.jadi || 'Sessions/SubBot'
 global.rutaJadiBot = join(__dirname, `./${jadi}`)
 if (global.yukiJadibts) {
   if (!existsSync(global.rutaJadiBot)) {
@@ -326,7 +329,7 @@ if (global.yukiJadibts) {
   }
 }
 
-const pluginFolder = global.__dirname(join(__dirname, './plugins/index'))
+const pluginFolder = join(__dirname, './plugins')
 const pluginFilter = (filename) => /\.js$/.test(filename)
 global.plugins = {}
 async function filesInit() {

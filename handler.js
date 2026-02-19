@@ -7,7 +7,7 @@ import chalk from "chalk"
 import fetch from "node-fetch"
 import ws from "ws"
 
-const { proto } = (await import("@whiskeysockets/baileys")).default
+const { proto } = await import("@whiskeysockets/baileys")
 const isNumber = x => typeof x === "number" && !isNaN(x)
 const delay = ms => isNumber(ms) && new Promise(resolve => setTimeout(function () {
 clearTimeout(this)
@@ -140,7 +140,9 @@ await delay(time)
 }, time)
 }
  
-if (m.isBaileys) return
+// السماح لردود الأزرار بالمرور
+const isButtonResponse = m.message?.interactiveResponseMessage || m.message?.buttonsResponseMessage || m.message?.listResponseMessage
+if (m.isBaileys && !isButtonResponse) return
 m.exp += Math.ceil(Math.random() * 10)
 let usedPrefix
 let groupMetadata = {}
@@ -157,7 +159,8 @@ groupMetadata = {}
 }
 const participants = (Array.isArray(groupMetadata.participants) ? groupMetadata.participants : []).map(participant => ({ id: participant.jid || participant.id, jid: participant.jid || participant.id, lid: participant.lid, admin: participant.admin }))
 const userGroup = (m.isGroup ? participants.find((u) => conn.decodeJid(u.jid) === m.sender) : {}) || {}
-const botGroup = (m.isGroup ? participants.find((u) => conn.decodeJid(u.jid) == this.user.jid) : {}) || {}
+const botJid = conn.decodeJid(this.user.jid)
+const botGroup = (m.isGroup ? participants.find((u) => conn.decodeJid(u.jid) === botJid) : {}) || {}
 const isRAdmin = userGroup?.admin == "superadmin" || false
 const isAdmin = isRAdmin || userGroup?.admin == "admin" || false
 const isBotAdmin = botGroup?.admin || false
