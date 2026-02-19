@@ -7,7 +7,8 @@ import chalk from "chalk"
 import fetch from "node-fetch"
 import ws from "ws"
 
-const { proto } = (await import("@whiskeysockets/baileys")).default
+const _baileysH = await import("@whiskeysockets/baileys")
+const { proto } = _baileysH.proto ? _baileysH : (_baileysH.default || _baileysH)
 const isNumber = x => typeof x === "number" && !isNaN(x)
 const delay = ms => isNumber(ms) && new Promise(resolve => setTimeout(function () {
 clearTimeout(this)
@@ -129,8 +130,8 @@ const settings = global.db.data.settings[this.user.jid]
 const isROwner = [...global.owner.map((number) => number)].map(v => v.replace(/[^0-9]/g, "") + "@s.whatsapp.net").includes(m.sender)
 const isOwner = isROwner || m.fromMe
 const isPrems = isROwner || global.prems.map(v => v.replace(/[^0-9]/g, "") + "@s.whatsapp.net").includes(m.sender) || user.premium == true
-const isOwners = [this.user.jid, ...global.owner.map((number) => number + "@s.whatsapp.net")].includes(m.sender)
-if (opts["queque"] && m.text && !(isPrems)) {
+const isOwners = [this.user.jid, ...global.owner.map((number) => number.replace(/[^0-9]/g, '') + "@s.whatsapp.net")].includes(m.sender)
+if (global.opts["queque"] && m.text && !(isPrems)) {
 const queque = this.msgqueque, time = 1000 * 5
 const previousID = queque[queque.length - 1]
 queque.push(m.id || m.key.id)
@@ -143,22 +144,50 @@ await delay(time)
 if (m.isBaileys) return
 m.exp += Math.ceil(Math.random() * 10)
 let usedPrefix
-// ✅ إصلاح BailMod: دائماً جلب من السيرفر + استخدام phoneNumber
+
+// ✅ إصلاح LID: مطابقة المشاركين بـ phoneNumber أو jid أو الرقم
 const _rawMeta = m.isGroup ? (await this.groupMetadata(m.chat).catch(_ => null) || conn.chats[m.chat]?.metadata || {}) : {}
-const _rawParticipants = (_rawMeta.participants || []).map(p => ({
-  ...p,
-  jid: p.phoneNumber || p.jid || p.id || '',
-  id: p.phoneNumber || p.jid || p.id || '',
-  admin: p.admin || null
-}))
+
+// نبني قائمة مشاركين مع الأرقام الحقيقية
+const _rawParticipants = (_rawMeta.participants || []).map(p => {
+  const realJid = p.phoneNumber || p.jid || p.id || ''
+  return {
+    ...p,
+    jid: realJid,
+    id: realJid,
+    rawId: p.id || p.jid || '',  // الـ LID الأصلي
+    admin: p.admin || null
+  }
+})
+
 const groupMetadata = m.isGroup ? { ..._rawMeta, participants: _rawParticipants } : {}
-const participants = (m.isGroup ? _rawParticipants : []).map(p => ({ id: p.jid, jid: p.jid, lid: p.id, admin: p.admin }))
+const participants = (m.isGroup ? _rawParticipants : []).map(p => ({
+  id: p.jid,
+  jid: p.jid,
+  lid: p.rawId,
+  admin: p.admin
+}))
+
 const senderNum = m.sender?.split('@')[0]
-const botNum = conn.decodeJid(this.user.jid)?.split('@')[0]
-const userGroup = (m.isGroup ? participants.find(u => u.jid?.split('@')[0] === senderNum) : {}) || {}
-const botGroup = (m.isGroup ? participants.find(u => u.jid?.split('@')[0] === botNum) : {}) || {}
-const isRAdmin = userGroup?.admin == "superadmin" || false
-const isAdmin = isRAdmin || userGroup?.admin == "admin" || false
+const botJid = conn.decodeJid(this.user.jid)
+const botNum = botJid?.split('@')[0]
+
+// البحث عن المرسل - نتحقق من الرقم أو الـ JID كامل
+const userGroup = m.isGroup ? (
+  participants.find(u => u.jid === m.sender) ||
+  participants.find(u => u.jid?.split('@')[0] === senderNum) ||
+  {}
+) : {}
+
+// البحث عن البوت - نتحقق من الرقم أو الـ JID كامل  
+const botGroup = m.isGroup ? (
+  participants.find(u => u.jid === botJid) ||
+  participants.find(u => u.jid?.split('@')[0] === botNum) ||
+  {}
+) : {}
+
+const isRAdmin = userGroup?.admin === "superadmin" || false
+const isAdmin = isRAdmin || userGroup?.admin === "admin" || false
 const isBotAdmin = botGroup?.admin === "superadmin" || botGroup?.admin === "admin" || false
 
 const ___dirname = path.join(path.dirname(fileURLToPath(import.meta.url)), "./plugins")
@@ -180,7 +209,7 @@ settings
 } catch (err) {
 console.error(err)
 }}
-if (!opts["restrict"])
+if (!global.opts["restrict"])
 if (plugin.tags && plugin.tags.includes("admin")) {
 continue
 }
@@ -347,7 +376,7 @@ console.error(err)
 }}}}}} catch (err) {
 console.error(err)
 } finally {
-if (opts["queque"] && m.text) {
+if (global.opts["queque"] && m.text) {
 const quequeIndex = this.msgqueque.indexOf(m.id || m.key.id)
 if (quequeIndex !== -1)
 this.msgqueque.splice(quequeIndex, 1)
@@ -376,7 +405,7 @@ admin: `『✦』El comando *${comando}* solo puede ser usado por los administra
 botAdmin: `『✦』Para ejecutar el comando *${comando}* debo ser administrador del grupo.`,
 restrict: `『✦』Esta caracteristica está desactivada.`
 }[type]
-if (msg) return conn.reply(m.chat, msg, m, rcanal).then(_ => m.react('✖️'))
+if (msg) return conn.reply(m.chat, msg, m).then(_ => m.react('✖️'))
 }
 let file = global.__filename(import.meta.url, true)
 watchFile(file, async () => {
