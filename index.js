@@ -172,7 +172,11 @@ const connectionOptions = {
   msgRetryCounterCache: msgRetryCounterCache || new Map(),
   userDevicesCache: userDevicesCache || new Map(),
   defaultQueryTimeoutMs: undefined,
-  cachedGroupMetadata: (jid) => global.conn?.chats?.[jid] ?? {},
+  cachedGroupMetadata: async (jid) => {
+    const meta = global.conn?.chats?.[jid]?.metadata
+    if (meta?.participants) return meta
+    return null
+  },
   version: version,
   keepAliveIntervalMs: 55000,
   maxIdleTimeMs: 60000,
